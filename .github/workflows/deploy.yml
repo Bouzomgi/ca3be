@@ -1,0 +1,71 @@
+name: 'Deploy'
+on:
+  workflow_dispatch:
+  push:
+    branches: main
+
+env:
+  ECR_REGISTRY: ${{ secrets.ECR_REGISTRY_NAME }}
+  ECR_REPOSITORY: ca3/backend
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  test-build-deploy:
+    runs-on: 'ubuntu-latest'
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.13.x
+          cache: npm
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Tests and Code Coverage
+        run: npm run test
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.IAM_ROLE_GITHUB }}
+          aws-region: us-east-1
+
+      - name: Push to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to ECR
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY
+
+      - name: Check Deployment Existence
+        id: stack_check
+        run: |
+          STACK_NAME="CdkInfraStack"
+          aws cloudformation describe-stacks --stack-name $STACK_NAME > /dev/null 2>&1
+          echo ::set-output name=stack_exists::${?}
+
+      - name: Update deployment
+        if: steps.stack_check.outputs.stack_exists == '0'
+        run: |
+          aws ecs update-service --cluster ca3 --service appserver-service --force-new-deployment
+          aws ecs wait services-stable --cluster ca3 --services appserver-service
+          STATUS=$(aws ecs describe-services --cluster ca3 --services appserver-service --query 'services[0].deployments[0].status' --output text)
+          if [ "$STATUS" != "PRIMARY" ]; then
+            echo "Deployment failed."
+            exit 1
+          else
+            echo "Deployment successful."
+          fi
