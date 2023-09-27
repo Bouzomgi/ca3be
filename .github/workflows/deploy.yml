@@ -13,6 +13,8 @@ concurrency:
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
   cancel-in-progress: true
 
+# one job for testing, one for building, different envvars for each! keep .env local!
+
 jobs:
   test-build-deploy:
     runs-on: 'ubuntu-latest'
@@ -38,7 +40,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: ${{ secrets.IAM_ROLE_GITHUB }}
+          role-to-assume: ${{ secrets.GHA_DEPLOYMENT_ROLE }} #have an updated name for this
           aws-region: us-east-1
 
       - name: Push to Amazon ECR

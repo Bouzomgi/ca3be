@@ -10,7 +10,7 @@ const env = cleanEnv(process.env, {
   DB_HOST: str(),
 
   DB_LOGGING: bool({ default: true }),
-  DB_DIALECT: str(),
+  DB_DIALECT: str({ default: 'mysql' }),
   DB_STORAGE_PATH: str({ default: '' })
 })
 
