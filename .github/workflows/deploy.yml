@@ -13,8 +13,6 @@ concurrency:
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
   cancel-in-progress: true
 
-# one job for testing, one for building, different envvars for each! keep .env local!
-
 jobs:
   test-build-deploy:
     runs-on: 'ubuntu-latest'
@@ -35,6 +33,17 @@ jobs:
         run: npm ci
 
       - name: Run Tests and Code Coverage
+        environment: test
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.PASSWORD }}
+
+          DB_DIALECT: ${{ vars.DB_DIALECT }}
+          DB_STORAGE_PATH: ${{ vars.DB_STORAGE_PATH }}
+          FRONTEND_ENDPOINT: ${{ vars.FRONTEND_ENDPOINT }}
+          PORT: ${{ vars.PORT }}
         run: npm run test
 
       - name: Configure AWS Credentials
@@ -47,7 +56,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build, tag, and push image to ECR
+      - name: Build, Tag, and Push Image to ECR
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY
@@ -59,7 +68,7 @@ jobs:
           aws cloudformation describe-stacks --stack-name $STACK_NAME > /dev/null 2>&1
           echo ::set-output name=stack_exists::${?}
 
-      - name: Update deployment
+      - name: Update Deployment
         if: steps.stack_check.outputs.stack_exists == '0'
         run: |
           aws ecs update-service --cluster ca3 --service appserver-service --force-new-deployment
