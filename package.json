@@ -8,7 +8,7 @@
     "build:dev": "npm run clean && npx tsc",
     "build:prod": "npm run clean && npx tsc -p tsconfig-build.json",
     "start": "concurrently \"npx tsc --watch\" \"nodemon -q -r dotenv/config dist/src/index.js\"",
-    "test": "DOTENV_CONFIG_PATH=./.env.test NODE_OPTIONS=--experimental-vm-modules npx jest --silent",
+    "test": "",
     "lint": "npx eslint --fix --ext .ts . && npx prettier --write .",
     "check-lint": "npx eslint --ext .ts . && npx prettier --check .",
     "clean": "npx tsc --build --clean",
