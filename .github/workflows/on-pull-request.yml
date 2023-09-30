@@ -12,6 +12,18 @@ concurrency:
 
 jobs:
   check-code:
+    environment: test
+    env:
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.PASSWORD }}
+
+      DB_DIALECT: ${{ vars.DB_DIALECT }}
+      DB_STORAGE_PATH: ${{ vars.DB_STORAGE_PATH }}
+      FRONTEND_ENDPOINT: ${{ vars.FRONTEND_ENDPOINT }}
+      PORT: ${{ vars.PORT }}
+
     runs-on: 'ubuntu-latest'
     permissions:
       contents: read
@@ -32,15 +44,4 @@ jobs:
         run: npm run check-lint
 
       - name: Run Tests and Code Coverage
-        environment: test
-        env:
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.PASSWORD }}
-
-          DB_DIALECT: ${{ vars.DB_DIALECT }}
-          DB_STORAGE_PATH: ${{ vars.DB_STORAGE_PATH }}
-          FRONTEND_ENDPOINT: ${{ vars.FRONTEND_ENDPOINT }}
-          PORT: ${{ vars.PORT }}
         run: npm test
