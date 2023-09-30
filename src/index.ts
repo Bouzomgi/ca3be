@@ -9,7 +9,11 @@ const app = express()
 
 // ROUTES
 router.get('/', (req, res) => {
-  res.send('go to bed chick en nugget')
+  res.send("Hit the backend! Let's see again!")
+})
+
+router.get('/ainsley', (req, res) => {
+  res.send('go 2 bed chick en nugget')
 })
 
 router.get('/random', (req, res) => {
