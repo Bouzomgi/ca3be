@@ -1,6 +1,7 @@
 import { cleanEnv, num, str, bool } from 'envalid'
 
 const env = cleanEnv(process.env, {
+  NODE_ENV: str(),
   PORT: num(),
   FRONTEND_ENDPOINT: str(),
 

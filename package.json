@@ -5,6 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "postinstall": "npx openapi-typescript ./node_modules/ca3spec/spec.yaml -o ./src/apiSpecTypes/schema.ts",
     "build:dev": "npm run clean && npx tsc",
     "build:prod": "npm run clean && npx tsc -p tsconfig-build.json",
     "start": "concurrently \"npx tsc --watch\" \"nodemon -q -r dotenv/config dist/src/index.js\"",
@@ -20,7 +21,11 @@
   "devDependencies": {
     "@babel/preset-env": "^7.22.20",
     "@types/jest": "^29.5.5",
+    "@types/js-yaml": "^4.0.6",
+    "@types/request": "^2.48.9",
     "@types/supertest": "^2.0.12",
+    "@types/swagger-jsdoc": "^6.0.1",
+    "@types/swagger-ui-express": "^4.1.4",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "@typescript-eslint/parser": "^6.7.0",
     "babel-jest": "^29.7.0",
@@ -30,18 +35,24 @@
     "eslint-plugin-jest": "^27.4.0",
     "jest": "^29.7.0",
     "nodemon": "^3.0.1",
+    "openapi-typescript": "^6.7.0",
     "prettier": "^3.0.3",
     "sqlite3": "^5.1.6",
     "supertest": "^6.3.3",
+    "swagger-ui-express": "^5.0.0",
     "ts-jest": "^29.1.1"
   },
   "dependencies": {
     "@types/cors": "^2.8.14",
     "@types/express": "^4.17.18",
+    "ca3spec": "git+ssh://git@github.com:bouzomgi/ca3spec.git",
     "dotenv": "^16.3.1",
     "envalid": "^7.3.1",
     "express": "^4.18.2",
+    "http-status-codes": "^2.3.0",
+    "js-yaml": "^4.1.0",
     "mysql2": "^3.6.1",
+    "request": "^2.88.2",
     "sequelize": "^6.33.0",
     "typescript": "^5.2.2"
   }

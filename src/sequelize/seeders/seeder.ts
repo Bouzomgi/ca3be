@@ -1,11 +1,7 @@
-import { sequelize } from '../index.js'
+import { sequelize } from '../index'
 
-import insertUserDetails from './baseSeed/insertUserDetails.js'
-import insertUsers from './baseSeed/insertUsers.js'
-import insertConversations from './baseSeed/insertConversations.js'
-import insertMessages from './baseSeed/insertMessages.js'
-import insertThreads from './baseSeed/insertThreads.js'
-import insertUnseenThreads from './baseSeed/insertUnseenThreads.js'
+import insertUserDetails from './baseSeed/insertUserDetails'
+import insertUsers from './baseSeed/insertUsers'
 
 class Seeder {
   static up = async () => {
@@ -13,10 +9,6 @@ class Seeder {
 
     await insertUsers(queryInterface)
     await insertUserDetails(queryInterface)
-    await insertConversations(queryInterface)
-    await insertMessages(queryInterface)
-    await insertThreads(queryInterface)
-    await insertUnseenThreads(queryInterface)
   }
 
   static down = async () => {
@@ -24,10 +16,6 @@ class Seeder {
 
     await queryInterface.bulkDelete('User', {})
     await queryInterface.bulkDelete('UserDetails', {})
-    await queryInterface.bulkDelete('Conversation', {})
-    await queryInterface.bulkDelete('Message', {})
-    await queryInterface.bulkDelete('Thread', {})
-    await queryInterface.bulkDelete('UnseenThread', {})
   }
 }
 

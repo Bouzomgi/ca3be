@@ -1,10 +1,6 @@
 import { Sequelize, Dialect } from 'sequelize'
 import env from '../config.js'
 
-import ConversationBuilder from './models/conversation.model.js'
-import MessageBuilder from './models/message.model.js'
-import ThreadBuilder from './models/thread.model.js'
-import UnseenThreadBuilder from './models/unseenThread.model.js'
 import UserBuilder from './models/user.model.js'
 import UserDetailsBuilder from './models/userDetails.model.js'
 
@@ -27,10 +23,6 @@ const sequelize = new Sequelize(
   dbConfig
 )
 
-const Conversation = ConversationBuilder(sequelize)
-const Message = MessageBuilder(sequelize)
-const Thread = ThreadBuilder(sequelize)
-const UnseenThread = UnseenThreadBuilder(sequelize)
 const User = UserBuilder(sequelize)
 const UserDetails = UserDetailsBuilder(sequelize)
 
@@ -45,12 +37,4 @@ await sequelize
     console.log('Error syncing models: ' + err)
   })
 
-export {
-  sequelize,
-  Conversation,
-  Message,
-  Thread,
-  UnseenThread,
-  User,
-  UserDetails
-}
+export { sequelize, User, UserDetails }

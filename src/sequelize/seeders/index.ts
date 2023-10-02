@@ -1,4 +1,4 @@
-import Seeder from './seeder.js'
+import Seeder from './seeder'
 
 const flagIndex = 2
 const args = process.argv.slice(flagIndex) // Remove the first two elements (node executable and script filename)
